@@ -60,10 +60,11 @@ crashlytics-build.properties
 
 
 # Additional things to ignore
-# Make sure I don't share paid unity assets on github by accident
 .vsconfig
-Assets/Kat*
-Assets/Poly*
 Assets/RPG*
 Assets/TextMesh*
+
+# Make sure I don't share paid unity assets on github by accident
+Assets/Kat*
+Assets/Poly*
 Assets/Toony*
