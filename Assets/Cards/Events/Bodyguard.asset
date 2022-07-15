@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb796b373614a84594c3efe56a5d94e, type: 3}
+  m_Name: Bodyguard
+  m_EditorClassIdentifier: 
+  cardName: Bodyguard
+  nameFontSize: 20
+  tier: 3
+  tierLevel: {fileID: 21300000, guid: d5aa0c71dd6790b4c9c56cd7311e134d, type: 3}
+  turnsToCreate: 0
+  buildingType: Event
+  cardBackgroundIcon: {fileID: 21300000, guid: 4ee30dde1bf1f1e409d60eeb3e33c6e9, type: 3}
+  description: Summon a Bodyguard to the Town Hall Location.
