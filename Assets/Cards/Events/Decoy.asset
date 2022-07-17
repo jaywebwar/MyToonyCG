@@ -21,3 +21,4 @@ MonoBehaviour:
   cardBackgroundIcon: {fileID: 21300000, guid: 5100db8b21a9d62459ba0ef78d1b5820, type: 3}
   description: Triggers when enemy plays Assassinate and you control the Bodyguard.
     Kill the bodyguard instead of your leader.
+  id: 14

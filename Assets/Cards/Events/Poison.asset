@@ -21,3 +21,4 @@ MonoBehaviour:
   cardBackgroundIcon: {fileID: 21300000, guid: 563ba873e69c99047a35204273c21c4f, type: 3}
   description: If you have a Tavern in play, you may use Poison to kill a troop of
     your choice.
+  id: 17

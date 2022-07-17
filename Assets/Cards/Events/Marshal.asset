@@ -21,3 +21,4 @@ MonoBehaviour:
   cardBackgroundIcon: {fileID: 21300000, guid: 445ebc8360501394db60886122657c4b, type: 3}
   description: Triggers from hand when attacked. Create 3 military units from available
     workers.
+  id: 16

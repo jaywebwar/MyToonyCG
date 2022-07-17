@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System;
 
 public class CardDisplay : MonoBehaviour
 {
@@ -18,6 +18,11 @@ public class CardDisplay : MonoBehaviour
     public Image backgroundIcon;
     public TextMeshProUGUI buildingType;
     public TextMeshProUGUI cardDescription;
+
+    public void SetThisCard(Card card)
+    {
+        thisCard = card;
+    }
 
     Card currentCard;
 

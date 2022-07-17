@@ -21,3 +21,4 @@ MonoBehaviour:
   cardBackgroundIcon: {fileID: 21300000, guid: 55aa03c0b0eb6eb46ac7b339c6d6519e, type: 3}
   description: Choose a military building. All recruitment restrictions are lifted
     for that building this turn.
+  id: 15

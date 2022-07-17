@@ -21,3 +21,4 @@ MonoBehaviour:
   cardBackgroundIcon: {fileID: 21300000, guid: 6dd6eb9b8ac519b469aefc9f2b3a1c06, type: 3}
   description: Triggers when opponent plays Poison and you have a Mage Tower in play.
     Cancel the effects of the Poison card.
+  id: 10

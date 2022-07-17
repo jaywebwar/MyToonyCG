@@ -20,3 +20,4 @@ MonoBehaviour:
   buildingType: Event
   cardBackgroundIcon: {fileID: 21300000, guid: 1b1f2fcab1c6a194cbd2a9127f40846d, type: 3}
   description: Delay target enemy buildiing under construction by 1 turn.
+  id: 19

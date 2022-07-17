@@ -20,3 +20,4 @@ MonoBehaviour:
   buildingType: Event
   cardBackgroundIcon: {fileID: 21300000, guid: 7552e7501d125d9438230a8bf60ec9ac, type: 3}
   description: Immediately revives leader to the Town Hall location at full health.
+  id: 18

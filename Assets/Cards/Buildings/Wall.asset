@@ -20,3 +20,4 @@ MonoBehaviour:
   buildingType: Defense
   cardBackgroundIcon: {fileID: 21300000, guid: 55aa03c0b0eb6eb46ac7b339c6d6519e, type: 3}
   description: Use 5 available workers to build.
+  id: 7

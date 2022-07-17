@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,5 +14,19 @@ public class Card : ScriptableObject
     public string buildingType;
     public Sprite cardBackgroundIcon;
     public string description;
+    public int id;
 
+    public int getID()
+    {
+        return id;
+    }
+
+    public Card getCardFromID(int id)
+    {
+        if (id == this.id)
+        {
+            return this;
+        }
+        return null;
+    }
 }
