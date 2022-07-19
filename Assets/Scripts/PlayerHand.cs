@@ -20,7 +20,6 @@ public class PlayerHand : NetworkBehaviour
 
         cardObject.GetComponent<CardDisplay>().SetThisCard(card);
         size++;
-        CmdDrawCard();
     }
 
     [Client]
@@ -33,12 +32,6 @@ public class PlayerHand : NetworkBehaviour
     public void DiscardCard(Card card)
     {
         size--;
-    }
-
-    [Command]
-    private void CmdDrawCard()
-    {
-        throw new NotImplementedException();
     }
 
     void Update()

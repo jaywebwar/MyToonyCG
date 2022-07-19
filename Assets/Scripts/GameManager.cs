@@ -25,8 +25,10 @@ public class GameManager : NetworkBehaviour
     [SerializeField] GameObject endTurnButton;
 
     //server properties
-    NetworkConnectionToClient player1;
-    NetworkConnectionToClient player2;
+    NetworkConnectionToClient p1;
+    NetworkConnectionToClient p2;
+    NetworkConnection player1;
+    NetworkConnection player2;
 
     //client properties
     bool isLocalPlayerTurn = false;
@@ -36,27 +38,91 @@ public class GameManager : NetworkBehaviour
     List<int> discardPile = new List<int>();
     
     NetworkIdentity _ni;
+    bool RpcReceived;
+
 
     [Server]
-    public void PassConnections(NetworkConnectionToClient conn1, NetworkConnectionToClient conn2)
+    public IEnumerator PassConnections(NetworkConnectionToClient conn1, NetworkConnectionToClient conn2)
     {
         //Set connections
-        player1 = conn1;
-        player2 = conn2;
-
         _ni = GetComponent<NetworkIdentity>();
 
-        _ni.AssignClientAuthority(player1);
-        StartGame(_ni.connectionToClient);
+        Debug.Log("Set Player1");
+        p1 = conn1;
+        _ni.AssignClientAuthority(p1);
+        player1 = _ni.connectionToClient;
+        RpcReceived = false;
+        RpcSetPlayer1(player1);
+        while(!RpcReceived)
+        {
+            yield return null;
+        }
+        _ni.RemoveClientAuthority();
+    
+
+        Debug.Log("Set player2");
+        p2 = conn2;
+        _ni.AssignClientAuthority(p2);
+        player2 = _ni.connectionToClient;
+        RpcReceived = false;
+        RpcSetPlayer2(player2);
+        while(!RpcReceived)
+        {
+            yield return null;
+        }
+        _ni.RemoveClientAuthority();
+        
+
+        
+        Debug.Log("Start p1 game");
+        _ni.AssignClientAuthority(p1);
+        RpcReceived = false;
+        RpcStartGame(_ni.connectionToClient);
+        while(!RpcReceived)
+        {
+            yield return null;
+        }
         _ni.RemoveClientAuthority();
 
-        _ni.AssignClientAuthority(player2);
-        StartGame(_ni.connectionToClient);
+        Debug.Log("Start p2 game");
+        _ni.AssignClientAuthority(p2);
+        RpcReceived = false;
+        RpcStartGame(_ni.connectionToClient);
+        while(!RpcReceived)
+        {
+            yield return null;
+        }
         _ni.RemoveClientAuthority();
+        
+    }
+
+    [Command]
+    public void RpcWasReceived()
+    {
+        RpcReceived = true;
+        Debug.Log("Rpc Received");
     }
 
     [TargetRpc]
-    public void StartGame(NetworkConnection conn)
+    public void RpcSetPlayer1(NetworkConnection conn)
+    {
+        player1 = conn;
+        Debug.Log("p1 = " + player1.ToString());
+
+        RpcWasReceived();
+    }
+
+    [TargetRpc]
+    public void RpcSetPlayer2(NetworkConnection conn)
+    {
+        player2 = conn;
+        Debug.Log("p1 = " + player2.ToString());
+
+        RpcWasReceived();
+    }
+
+    [TargetRpc]
+    public void RpcStartGame(NetworkConnection conn)
     {
         //Show enemy player
         remotePlayer.InitBuildings();
@@ -76,29 +142,48 @@ public class GameManager : NetworkBehaviour
         PrintDeckToConsole();
 
         //Deal cards to hand
-        DealHand();
+        DealHand(conn);
+
+        isLocalPlayerTurn = conn == player1 ? true : false;
+        RpcWasReceived();
     }
 
     [Client]
-    void DealHand()
+    void DealHand(NetworkConnection conn)
     {
         for (int i = localHand.Size(); i < handSize; i++)
         {
             localHand.DrawCard(deck[i]);
             deck.RemoveAt(i);
-            CmdMakeEnemyDraw();
+            if (conn == player1)
+            {
+                CmdMakePlayerDraw(2);
+            }
+            else
+            {
+                CmdMakePlayerDraw(1);
+            }
+                
         }
     }
 
-    [Command(requiresAuthority = false)]
-    private void CmdMakeEnemyDraw()
+    [Command]
+    public void CmdMakePlayerDraw(int playerNumber)
     {
         Debug.Log("Make it");
-        RpcMakeEnemyDraw();
+        if(playerNumber == 1)
+        {
+            RpcMakeEnemyDraw(player1);
+        }
+        else
+        {
+            RpcMakeEnemyDraw(player2);
+        }
+        
     }
 
     [TargetRpc]
-    void RpcMakeEnemyDraw()
+    public void RpcMakeEnemyDraw(NetworkConnection conn)
     {
         remoteHand.DrawCard();
     }
@@ -158,12 +243,17 @@ public class GameManager : NetworkBehaviour
     {
         if(isLocalPlayerTurn)
         {
-            ActivateUIButtons();
+            ActivateUIButtons(true);
+        }
+        else
+        {
+            ActivateUIButtons(false);
         }
     }
 
-    private void ActivateUIButtons()
+    void ActivateUIButtons(bool activate)
     {
-        throw new NotImplementedException();
+        attackButton.SetActive(activate);
+        endTurnButton.SetActive(activate);
     }
 }

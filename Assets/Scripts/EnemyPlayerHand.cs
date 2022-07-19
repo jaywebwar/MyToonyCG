@@ -10,7 +10,7 @@ public class EnemyPlayerHand : NetworkBehaviour
     [SerializeField] GameObject cardPrefab;
 
 
-    [TargetRpc]
+    [Client]
     public void DrawCard()
     {
         GameObject cardObject = Instantiate(cardPrefab);

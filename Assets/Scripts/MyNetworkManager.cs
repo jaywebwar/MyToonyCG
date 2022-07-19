@@ -43,7 +43,8 @@ public class MyNetworkManager : NetworkManager
             //second player connects
             conn2 = conn;
             Debug.Log("Both players connected & ready!");
-            gameManager.PassConnections(conn1, conn2);
+            Debug.Log("Connections are p1: " + conn1.ToString() + " and p2: " + conn2.ToString());
+            StartCoroutine(gameManager.PassConnections(conn1, conn2));
         }
     }
 

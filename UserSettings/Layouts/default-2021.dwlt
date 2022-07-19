@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 5120
     height: 1357
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Game
   m_RootView: {fileID: 14}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -101,7 +101,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 7602
+  controlID: 138
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -121,8 +121,8 @@ MonoBehaviour:
     y: 0
     width: 665
     height: 1307
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 300}
   m_MaxSize: {x: 32384, y: 24288}
   vertical: 0
-  controlID: 7572
+  controlID: 173
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 300}
   m_MaxSize: {x: 24288, y: 24288}
   vertical: 1
-  controlID: 7573
+  controlID: 174
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 200}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 7575
+  controlID: 176
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -332,7 +332,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 7574
+  controlID: 175
 --- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -382,7 +382,7 @@ MonoBehaviour:
     height: 30
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
-  m_LastLoadedLayoutName: myLayout
+  m_LastLoadedLayoutName: 
 --- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1505,22 +1505,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Cards
+    - Assets/ImportedAssets/_My Prefabs
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Cards
+  - Assets/ImportedAssets/_My Prefabs
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\jaywe\Documents\Personal Projects\MyToonyCG
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: a60f0100
-    m_LastClickedID: 69542
-    m_ExpandedIDs: 00000000780f01007a0f01007c0f01007e0f0100800f0100820f0100840f0100860f0100880f01008a0f01008c0f01008e0f0100900f0100940f0100960f0100980f01009a0f01009c0f01009e0f0100c40f0100ca0f010000ca9a3b
+    scrollPos: {x: 0, y: 3}
+    m_SelectedIDs: aa0e0100
+    m_LastClickedID: 69290
+    m_ExpandedIDs: 00000000900e0100920e0100940e0100960e0100980e01009a0e01009c0e01009e0e0100a00e0100a20e0100a40e0100a60e0100aa0e0100ac0e0100ae0e0100b00e0100b20e0100b40e0100b80e0100d20e0100d40e0100da0e0100de0e010004100100f2110100001201000212010000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1548,7 +1548,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000780f01007a0f01007c0f01007e0f0100800f0100820f0100840f0100860f0100880f01008a0f01008c0f01008e0f0100900f0100920f0100960f0100980f01009a0f01009c0f01009e0f0100a00f0100c40f0100d00f010000ca9a3b
+    m_ExpandedIDs: 00000000900e0100920e0100940e0100960e0100980e01009a0e01009c0e01009e0e0100a00e0100a20e0100a40e0100a60e0100a80e0100aa0e0100ac0e0100ae0e0100b00e0100b20e0100b40e0100b60e0100b80e0100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1575,22 +1575,22 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000c6904b00f2260100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Cards
-      m_OriginalName: Cards
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 69542
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 10}
     m_CreateAssetUtility:
@@ -1665,8 +1665,8 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: -28232
-    y: -31970
+    x: 3768
+    y: 73
     width: 685
     height: 416
   m_ViewDataDictionary: {fileID: 0}
@@ -1676,20 +1676,20 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 72a3f7ffd2a3f7ff52b7faffdae4faffdce4faff16fffaff7258fbffaa63fbffb063fbffb87cfcff7e67feff4a75ffff98f0ffff36fbffff38fbffff305c0000c45c0000185d0000885d0000505f00001c610000206100005c6100001a6200002c6200001c6e000034747a003ab57a000e1c7b0010c37b002e6c7c00f8967c00
+      m_SelectedIDs: 68600000
+      m_LastClickedID: 24680
+      m_ExpandedIDs: 0a9bfafffe19fbff021afbff0a1afbff4839fbff2cb4fcff36fbfffff4ffffff585c0000f05c0000665d0000125f0000686000006061000096610000a4610000b8610000b6620000be620000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: Building (1)
-        m_OriginalName: Building (1)
+        m_Name: RemotePlayer
+        m_OriginalName: RemotePlayer
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
           y: 0
           width: 0
           height: 0
-        m_UserData: 8071700
+        m_UserData: 25070
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
         m_OriginalEventType: 0
@@ -1927,9 +1927,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -18.96385, y: 52.24848, z: 177.81342}
+    m_Target: {x: 4.5980225, y: 68.19732, z: 146.84311}
     speed: 2
-    m_Value: {x: -18.96385, y: 52.24848, z: 177.81342}
+    m_Value: {x: 4.5980225, y: 68.19732, z: 146.84311}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1976,13 +1976,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.0060827103, y: -0.96971065, z: 0.24379331, w: -0.021747906}
+    m_Target: {x: 0.07278599, y: -0.9255541, z: 0.2373209, w: 0.2863905}
     speed: 2
-    m_Value: {x: -0.0039073136, y: -0.9693627, z: 0.24525791, w: -0.013012055}
+    m_Value: {x: 0.072775476, y: -0.9254204, z: 0.23728661, w: 0.28634915}
   m_Size:
-    m_Target: 13.801459
+    m_Target: 122.64824
     speed: 2
-    m_Value: 13.207138
+    m_Value: 122.64824
   m_Ortho:
     m_Target: 0
     speed: 2
