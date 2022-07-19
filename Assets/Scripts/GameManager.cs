@@ -15,19 +15,51 @@ public class GameManager : NetworkBehaviour
     [SerializeField] int shuffleCount = 7;
     [SerializeField] int handSize = 10;
 
-    [Header("References")]
-    [SerializeField] GameObject playerHand;
-    PlayerHand _ph;
+    [Header("Client References")]
+    [SerializeField] LocalPlayer localPlayer;
+    [SerializeField] EnemyPlayer remotePlayer;
+    [SerializeField] PlayerHand localHand;
 
+    [SerializeField] EnemyPlayerHand remoteHand;
+    [SerializeField] GameObject attackButton;
+    [SerializeField] GameObject endTurnButton;
+
+    //server properties
+    NetworkConnectionToClient player1;
+    NetworkConnectionToClient player2;
+
+    //client properties
+    bool isLocalPlayerTurn = false;
+    int playerCount = 0;
+    const int maxPlayerCount = 2;
     List<Card> deck = new List<Card>();
     List<int> discardPile = new List<int>();
+    
+    NetworkIdentity _ni;
 
-
-    // Start is called before the first frame update
-    void Start()
+    [Server]
+    public void PassConnections(NetworkConnectionToClient conn1, NetworkConnectionToClient conn2)
     {
-        //Get references needed
-        _ph = playerHand.GetComponent<PlayerHand>();
+        //Set connections
+        player1 = conn1;
+        player2 = conn2;
+
+        _ni = GetComponent<NetworkIdentity>();
+
+        _ni.AssignClientAuthority(player1);
+        StartGame(_ni.connectionToClient);
+        _ni.RemoveClientAuthority();
+
+        _ni.AssignClientAuthority(player2);
+        StartGame(_ni.connectionToClient);
+        _ni.RemoveClientAuthority();
+    }
+
+    [TargetRpc]
+    public void StartGame(NetworkConnection conn)
+    {
+        //Show enemy player
+        remotePlayer.InitBuildings();
 
         //Assemble Deck
         for (int i = 0; i < deckCards.Count; i++)
@@ -41,20 +73,37 @@ public class GameManager : NetworkBehaviour
 
         //Shuffle Deck
         ShuffleDeck();
+        PrintDeckToConsole();
 
         //Deal cards to hand
         DealHand();
     }
 
+    [Client]
     void DealHand()
     {
-        for (int i = 0; i < handSize; i++)
+        for (int i = localHand.Size(); i < handSize; i++)
         {
-            _ph.DrawCard(deck[i]);
+            localHand.DrawCard(deck[i]);
             deck.RemoveAt(i);
+            CmdMakeEnemyDraw();
         }
     }
 
+    [Command(requiresAuthority = false)]
+    private void CmdMakeEnemyDraw()
+    {
+        Debug.Log("Make it");
+        RpcMakeEnemyDraw();
+    }
+
+    [TargetRpc]
+    void RpcMakeEnemyDraw()
+    {
+        remoteHand.DrawCard();
+    }
+
+    [Client]
     void ShuffleDeck()
     {
         for (int i = 0; i < shuffleCount; i++)
@@ -85,10 +134,10 @@ public class GameManager : NetworkBehaviour
                     deck[2*j+1] = firstHalf[j];
                 }
             }
-            PrintDeckToConsole();
         }
     }
 
+    [Client]
     void PrintDeckToConsole()
     {
         string str = "Deck: ";
@@ -107,6 +156,14 @@ public class GameManager : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(isLocalPlayerTurn)
+        {
+            ActivateUIButtons();
+        }
+    }
+
+    private void ActivateUIButtons()
+    {
+        throw new NotImplementedException();
     }
 }
