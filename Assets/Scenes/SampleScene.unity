@@ -13944,9 +13944,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  gameManager: {fileID: 0}
+  gameManager: {fileID: 1171883623}
   handLayout: {fileID: 213798911}
   cardPrefab: {fileID: 8417513948701978446, guid: 9d41dd1a6e07d5e44b30eefb75dee03b, type: 3}
+  emphasizePosition: {x: 0, y: 50, z: 0}
+  emphasizeScale: {x: 1.2, y: 1.2, z: 1.2}
 --- !u!114 &962216745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20591,8 +20593,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  gameManager: {fileID: 1171883623}
   handLayout: {fileID: 1901024146}
   cardPrefab: {fileID: 2468661154072522756, guid: 479537350554edb46a06e8e2759f47aa, type: 3}
+  emphasizePosition: {x: 0, y: -50, z: 0}
+  emphasizeScale: {x: 1.2, y: 1.2, z: 1.2}
 --- !u!114 &1484365290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24572,7 +24577,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

@@ -96,6 +96,36 @@ public class GameManager : NetworkBehaviour
         
     }
 
+    [Client]
+    public int GetPlayerNumber()
+    {
+        return player1 == null ? 2 : 1;
+    }
+
+    [Command(requiresAuthority=false)]
+    public void CmdHighlightEnemyHandCard(int index, bool shouldHighlight, int playerNumber)
+    {
+        Debug.Log("Server determines which player to RPC.");
+        Debug.Log("Server says index = " + index.ToString());
+        if(playerNumber == 1)
+        {
+            RpcHighlightEnemyHandCard(player2, index, shouldHighlight);
+        }
+        else
+        {
+            RpcHighlightEnemyHandCard(player1, index, shouldHighlight);
+        }
+    }
+
+    [TargetRpc]
+    public void RpcHighlightEnemyHandCard(NetworkConnection conn, int index, bool shouldHighlight)
+    {
+        Debug.Log("Client Receives index = " + index.ToString());
+        GameObject card = remoteHand.transform.GetChild(0).GetChild(0).GetChild(index).gameObject;
+        Debug.Log("Card = " + card.ToString());
+        remoteHand.EmphasizeCard(card, shouldHighlight);
+    }
+
     [Command]
     public void RpcWasReceived()
     {
@@ -144,6 +174,7 @@ public class GameManager : NetworkBehaviour
         //Deal cards to hand
         DealHand(conn);
 
+        //Make it Player 1's turn.
         isLocalPlayerTurn = conn == player1 ? true : false;
         RpcWasReceived();
     }
@@ -170,7 +201,6 @@ public class GameManager : NetworkBehaviour
     [Command]
     public void CmdMakePlayerDraw(int playerNumber)
     {
-        Debug.Log("Make it");
         if(playerNumber == 1)
         {
             RpcMakeEnemyDraw(player1);
