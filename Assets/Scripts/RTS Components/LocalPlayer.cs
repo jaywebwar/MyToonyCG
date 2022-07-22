@@ -1,25 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 using System;
 
-public class LocalPlayer : NetworkBehaviour
+public class LocalPlayer : MonoBehaviour
 {
 
-    [SerializeField] List<GameObject> primaryBuildings;
-    [SerializeField] List<GameObject> secondaryBuildings;
-    [SerializeField] List<GameObject> keepTowers;
-    [SerializeField] GameObject keep;
+    [SerializeField] protected List<GameObject> primaryBuildings;
+    [SerializeField] protected List<GameObject> secondaryBuildings;
+    [SerializeField] protected List<GameObject> keepTowers;
+    [SerializeField] protected GameObject keep;
     [SerializeField] List<GameObject> playerMatArray = new List<GameObject>();
     GameManager _gm;
-
-    
-    bool localPlayerHasEnemy = false;
-
+    [SerializeField] RTSUnit leader;
+    List<RTSUnit> army = new List<RTSUnit>();
 
 
-    [Client]
+
     public void InitBuildings()
     {
         //Hides all buildings and building mat
@@ -39,4 +36,15 @@ public class LocalPlayer : NetworkBehaviour
         keep.SetActive(true);
     }
 
+    public void AssignLeader(string name)
+    {
+        Instantiate(leader,keep.transform.GetChild(0));
+        foreach (var unit in keep.GetComponent<RTSBuilding>().thisBuilding.spawnableUnits)
+        {
+            if(unit.unitName == name)
+            {
+                leader.SetThisUnit(unit);
+            }
+        }
+    }
 }

@@ -13,22 +13,20 @@ public class GameManager : NetworkBehaviour
 
     [Header("Game Parameters")]
     [SerializeField] int shuffleCount = 7;
-    [SerializeField] int handSize = 10;
+    [SerializeField] int handSize = 8;
 
     [Header("Client References")]
     [SerializeField] LocalPlayer localPlayer;
     [SerializeField] EnemyPlayer remotePlayer;
     [SerializeField] PlayerHand localHand;
-
     [SerializeField] EnemyPlayerHand remoteHand;
     [SerializeField] GameObject attackButton;
     [SerializeField] GameObject endTurnButton;
 
     //server properties
-    NetworkConnectionToClient p1;
-    NetworkConnectionToClient p2;
-    NetworkConnection player1;
-    NetworkConnection player2;
+    NetworkConnection player1Connection;
+    NetworkConnection player2Connection;
+    int leaderIndexToIgnore = -1;
 
     //client properties
     bool isLocalPlayerTurn = false;
@@ -36,9 +34,9 @@ public class GameManager : NetworkBehaviour
     const int maxPlayerCount = 2;
     List<Card> deck = new List<Card>();
     List<int> discardPile = new List<int>();
-    
     NetworkIdentity _ni;
     bool RpcReceived;
+
 
 
     [Server]
@@ -48,11 +46,10 @@ public class GameManager : NetworkBehaviour
         _ni = GetComponent<NetworkIdentity>();
 
         Debug.Log("Set Player1");
-        p1 = conn1;
-        _ni.AssignClientAuthority(p1);
-        player1 = _ni.connectionToClient;
+        _ni.AssignClientAuthority(conn1);
+        player1Connection = _ni.connectionToClient;
         RpcReceived = false;
-        RpcSetPlayer1(player1);
+        RpcSetPlayer1(player1Connection);
         while(!RpcReceived)
         {
             yield return null;
@@ -60,12 +57,11 @@ public class GameManager : NetworkBehaviour
         _ni.RemoveClientAuthority();
     
 
-        Debug.Log("Set player2");
-        p2 = conn2;
-        _ni.AssignClientAuthority(p2);
-        player2 = _ni.connectionToClient;
+        Debug.Log("Set player2Connection");
+        _ni.AssignClientAuthority(conn2);
+        player2Connection = _ni.connectionToClient;
         RpcReceived = false;
-        RpcSetPlayer2(player2);
+        RpcSetPlayer2(player2Connection);
         while(!RpcReceived)
         {
             yield return null;
@@ -75,31 +71,40 @@ public class GameManager : NetworkBehaviour
 
         
         Debug.Log("Start p1 game");
-        _ni.AssignClientAuthority(p1);
         RpcReceived = false;
-        RpcStartGame(_ni.connectionToClient);
+        RpcStartGame(player1Connection);
         while(!RpcReceived)
         {
             yield return null;
         }
-        _ni.RemoveClientAuthority();
 
         Debug.Log("Start p2 game");
-        _ni.AssignClientAuthority(p2);
         RpcReceived = false;
-        RpcStartGame(_ni.connectionToClient);
+        RpcStartGame(player2Connection);
         while(!RpcReceived)
         {
             yield return null;
         }
-        _ni.RemoveClientAuthority();
         
+    }
+
+    [Command]
+    public void CmdMakeLeaderChoice(int index)
+    {
+        if(leaderIndexToIgnore < 0)
+        {
+            leaderIndexToIgnore = index;
+        }
+        else
+        {
+
+        }
     }
 
     [Client]
     public int GetPlayerNumber()
     {
-        return player1 == null ? 2 : 1;
+        return player1Connection == null ? 2 : 1;
     }
 
     [Command(requiresAuthority=false)]
@@ -109,11 +114,11 @@ public class GameManager : NetworkBehaviour
         Debug.Log("Server says index = " + index.ToString());
         if(playerNumber == 1)
         {
-            RpcHighlightEnemyHandCard(player2, index, shouldHighlight);
+            RpcHighlightEnemyHandCard(player2Connection, index, shouldHighlight);
         }
         else
         {
-            RpcHighlightEnemyHandCard(player1, index, shouldHighlight);
+            RpcHighlightEnemyHandCard(player1Connection, index, shouldHighlight);
         }
     }
 
@@ -126,7 +131,7 @@ public class GameManager : NetworkBehaviour
         remoteHand.EmphasizeCard(card, shouldHighlight);
     }
 
-    [Command]
+    [Command(requiresAuthority=false)]
     public void RpcWasReceived()
     {
         RpcReceived = true;
@@ -136,8 +141,8 @@ public class GameManager : NetworkBehaviour
     [TargetRpc]
     public void RpcSetPlayer1(NetworkConnection conn)
     {
-        player1 = conn;
-        Debug.Log("p1 = " + player1.ToString());
+        player1Connection = conn;
+        Debug.Log("p1 = " + player1Connection.ToString());
 
         RpcWasReceived();
     }
@@ -145,8 +150,8 @@ public class GameManager : NetworkBehaviour
     [TargetRpc]
     public void RpcSetPlayer2(NetworkConnection conn)
     {
-        player2 = conn;
-        Debug.Log("p1 = " + player2.ToString());
+        player2Connection = conn;
+        Debug.Log("p1 = " + player2Connection.ToString());
 
         RpcWasReceived();
     }
@@ -175,7 +180,7 @@ public class GameManager : NetworkBehaviour
         DealHand(conn);
 
         //Make it Player 1's turn.
-        isLocalPlayerTurn = conn == player1 ? true : false;
+        isLocalPlayerTurn = conn == player1Connection ? true : false;
         RpcWasReceived();
     }
 
@@ -186,7 +191,7 @@ public class GameManager : NetworkBehaviour
         {
             localHand.DrawCard(deck[i]);
             deck.RemoveAt(i);
-            if (conn == player1)
+            if (conn == player1Connection)
             {
                 CmdMakePlayerDraw(2);
             }
@@ -198,16 +203,16 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    [Command]
+    [Command(requiresAuthority=false)]
     public void CmdMakePlayerDraw(int playerNumber)
     {
         if(playerNumber == 1)
         {
-            RpcMakeEnemyDraw(player1);
+            RpcMakeEnemyDraw(player1Connection);
         }
         else
         {
-            RpcMakeEnemyDraw(player2);
+            RpcMakeEnemyDraw(player2Connection);
         }
         
     }

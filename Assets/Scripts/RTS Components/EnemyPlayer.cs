@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Mirror;
 using UnityEngine;
 
-public class EnemyPlayer : NetworkBehaviour
+public class EnemyPlayer : MonoBehaviour
 {
     [SerializeField] List<GameObject> primaryBuildings;
     [SerializeField] List<GameObject> secondaryBuildings;
@@ -12,7 +11,8 @@ public class EnemyPlayer : NetworkBehaviour
     [SerializeField] GameObject keep;
     EnemyPlayerHand _ph;
 
-    [Client]
+    [SerializeField] RTSUnit leader;
+
     public void HideAllBuildings()
     {
         //Hides all buildings and building mat
@@ -31,5 +31,17 @@ public class EnemyPlayer : NetworkBehaviour
         keepTowers[0].SetActive(true);
         keepTowers[1].SetActive(true);
         keep.SetActive(true);
+    }
+
+    public void AssignLeader(string name)
+    {
+        Instantiate(leader,keep.transform.GetChild(0));
+        foreach (var unit in keep.GetComponent<RTSBuilding>().thisBuilding.spawnableUnits)
+        {
+            if(unit.unitName == name)
+            {
+                leader.SetThisUnit(unit);
+            }
+        }
     }
 }

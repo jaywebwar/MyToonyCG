@@ -6,4 +6,5 @@ using UnityEngine;
 public class Building : ScriptableObject
 {
     public GameObject buildingPrefab;
+    public List<Unit> spawnableUnits;
 }

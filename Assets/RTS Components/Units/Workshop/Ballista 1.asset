@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f45021da3044df24c944790350d88b32, type: 3}
+  m_Name: Ballista 1
+  m_EditorClassIdentifier: 
+  unitPrefab: {fileID: 349307896763199085, guid: f3be0ddd69332e14bae37df18ea97d67, type: 3}
+  isMounted: 0
+  isSiegeEquipment: 1
