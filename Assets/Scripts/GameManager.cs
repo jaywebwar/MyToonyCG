@@ -11,13 +11,20 @@ public class GameManager : NetworkBehaviour
     [SerializeField] List<Card> deckCards;
     [SerializeField] List<int> cardQuantities;//These must be in the same order as the List of cards to be associated properly!
 
+    [SerializeField] Transform leaderCardUILayout;
+    [SerializeField] GameObject leaderCardPrefab;
+    [SerializeField] Card[] leaderCards;
+
     [Header("Game Parameters")]
     [SerializeField] int shuffleCount = 7;
     [SerializeField] int handSize = 8;
 
+    [Header("Server References")]
+    [SerializeField] Player player1;
+    [SerializeField] Player player2;
+
+
     [Header("Client References")]
-    [SerializeField] LocalPlayer localPlayer;
-    [SerializeField] EnemyPlayer remotePlayer;
     [SerializeField] PlayerHand localHand;
     [SerializeField] EnemyPlayerHand remoteHand;
     [SerializeField] GameObject attackButton;
@@ -26,7 +33,13 @@ public class GameManager : NetworkBehaviour
     //server properties
     NetworkConnection player1Connection;
     NetworkConnection player2Connection;
+    bool rpcReceived;
+
     int leaderIndexToIgnore = -1;
+    bool p2PickedLeader = false;
+    Card p2Leader;
+    bool p1PickedLeader = false;
+    Card p1Leader;
 
     //client properties
     bool isLocalPlayerTurn = false;
@@ -34,23 +47,21 @@ public class GameManager : NetworkBehaviour
     const int maxPlayerCount = 2;
     List<Card> deck = new List<Card>();
     List<int> discardPile = new List<int>();
-    NetworkIdentity _ni;
-    bool RpcReceived;
 
-
+    
 
     [Server]
     public IEnumerator PassConnections(NetworkConnectionToClient conn1, NetworkConnectionToClient conn2)
     {
         //Set connections
-        _ni = GetComponent<NetworkIdentity>();
+        NetworkIdentity _ni = GetComponent<NetworkIdentity>();
 
         Debug.Log("Set Player1");
         _ni.AssignClientAuthority(conn1);
         player1Connection = _ni.connectionToClient;
-        RpcReceived = false;
-        RpcSetPlayer1(player1Connection);
-        while(!RpcReceived)
+        rpcReceived = false;
+        RpcSetPlayerNumber(player1Connection, 1);
+        while(!rpcReceived)
         {
             yield return null;
         }
@@ -60,44 +71,185 @@ public class GameManager : NetworkBehaviour
         Debug.Log("Set player2Connection");
         _ni.AssignClientAuthority(conn2);
         player2Connection = _ni.connectionToClient;
-        RpcReceived = false;
-        RpcSetPlayer2(player2Connection);
-        while(!RpcReceived)
+        rpcReceived = false;
+        RpcSetPlayerNumber(player2Connection, 2);
+        while(!rpcReceived)
         {
             yield return null;
         }
         _ni.RemoveClientAuthority();
-        
 
-        
-        Debug.Log("Start p1 game");
-        RpcReceived = false;
-        RpcStartGame(player1Connection);
-        while(!RpcReceived)
-        {
-            yield return null;
-        }
+        AssignPlayersOnServer();
+        Debug.Log("Players assigned.");
 
-        Debug.Log("Start p2 game");
-        RpcReceived = false;
-        RpcStartGame(player2Connection);
-        while(!RpcReceived)
-        {
-            yield return null;
-        }
+        //Alert all players that all players have connected.
+        AlertPlayersOfConnection();
+
+        StartCoroutine(HandlePlayerPreGameChoices());
         
     }
 
-    [Command]
+    [ClientRpc]
+    public void AlertPlayersOfConnection()
+    {
+        foreach (Player player in FindObjectsOfType<Player>())
+        {
+            if(player.isLocalPlayer)
+            {
+                player.SetAllPlayersAreConnected(true);
+            }
+        }
+    }
+
+    [TargetRpc]
+    public void RpcSetPlayerNumber(NetworkConnection player1Connection, int playerNumber)
+    {
+        Player[] players = FindObjectsOfType<Player>();
+        foreach(Player player in players)
+        {
+            if(player.isLocalPlayer)
+            {
+                //Set playerNumber on the player and set the appropriate player object in the client's GM.
+                player.SetPlayerNumber(playerNumber);
+
+                if (playerNumber == 1)
+                {
+                    Debug.Log("This is P1.");
+                    player1 = player;
+                }
+                else
+                {
+                    Debug.Log("This is P2.");
+                    player2 = player;
+                }
+            }
+        }
+        CmdRpcReceived();
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdRpcReceived()
+    {
+        rpcReceived = true;
+    }
+
+    [Server]
+    void AssignPlayersOnServer()
+    {
+        Player[] players = FindObjectsOfType<Player>();
+        for (int i = 0; i < players.Length; i++)
+        {
+            if (players[i].GetPlayerNumber() == 1)
+            {
+                player1 = players[i];
+            }
+            else if (players[i].GetPlayerNumber() == 2)
+            {
+                player2 = players[i];
+            }
+        }
+    }
+
+    [Server]
+    private IEnumerator HandlePlayerPreGameChoices()
+    {
+        //TODO: Let player choose their color and their enemy's color
+        //TODO: Let player choose card style and enemy card style
+
+        //Assign Leaders
+        Debug.Log("Showing Leader options to P2.");
+        RpcShowLeaderOptions(player2Connection, leaderIndexToIgnore);
+        while(!p2PickedLeader)
+        {
+            yield return null;
+        }
+
+        Debug.Log("Showing Leader options to P1.");
+        RpcShowLeaderOptions(player1Connection, leaderIndexToIgnore);
+        while(!p1PickedLeader)
+        {
+            yield return null;
+        }
+
+        Debug.Log("Server says to spawn leaders.");
+        SpawnLeaders();
+        //Start Game loop
+        //Debug.Log("Start p1 game");
+        //RpcReceived = false;
+        //RpcStartGame(player1Connection);
+        //while (!RpcReceived)
+        //{
+        //    yield return null;
+        //}
+
+        //Debug.Log("Start p2 game");
+        //RpcReceived = false;
+        //RpcStartGame(player2Connection);
+        //while (!RpcReceived)
+        //{
+        //    yield return null;
+        //}
+    }
+
+    [TargetRpc]
+    public void RpcShowLeaderOptions(NetworkConnection conn, int indexToIgnore)
+    {
+        Debug.Log("Showing leader options...");
+        for (int i = 0; i < leaderCards.Length; i++)
+        {
+            if (i != indexToIgnore)
+            {
+                GameObject cardObj = Instantiate(leaderCardPrefab.gameObject);
+                cardObj.transform.SetParent(leaderCardUILayout, false);
+
+                cardObj.GetComponent<LeaderCardDisplay>().SetThisCard(leaderCards[i]);
+            }
+        }
+    }
+
+    [Command(requiresAuthority = false)]
     public void CmdMakeLeaderChoice(int index)
     {
-        if(leaderIndexToIgnore < 0)
+        if (leaderIndexToIgnore < 0)
         {
+            Debug.Log("P2 picked " + leaderCards[index].cardName);
+            p2PickedLeader = true;
+            p2Leader = leaderCards[index];
             leaderIndexToIgnore = index;
         }
         else
         {
+            if(index < leaderIndexToIgnore)
+            {
+                Debug.Log("P1 picked " + leaderCards[index]);
+                p1Leader = leaderCards[index];
+            }
+            else
+            {
+                Debug.Log("P1 picked " + leaderCards[index+1]);
+                p1Leader = leaderCards[index + 1];
+            }
+            p1PickedLeader = true;
+        }
+    }
 
+    [Server]
+    void SpawnLeaders()
+    {
+        RpcSpawnLeader(player1Connection, 1);
+        RpcSpawnLeader(player2Connection, 2);
+    }
+
+    [TargetRpc]
+    public void RpcSpawnLeader(NetworkConnection player1Connection, int playerNumber)
+    {
+        if(playerNumber == 1)
+        {
+            player1.SpawnLeader();
+        }
+        else
+        {
+            player2.SpawnLeader();
         }
     }
 
@@ -131,36 +283,9 @@ public class GameManager : NetworkBehaviour
         remoteHand.EmphasizeCard(card, shouldHighlight);
     }
 
-    [Command(requiresAuthority=false)]
-    public void RpcWasReceived()
-    {
-        RpcReceived = true;
-        Debug.Log("Rpc Received");
-    }
-
-    [TargetRpc]
-    public void RpcSetPlayer1(NetworkConnection conn)
-    {
-        player1Connection = conn;
-        Debug.Log("p1 = " + player1Connection.ToString());
-
-        RpcWasReceived();
-    }
-
-    [TargetRpc]
-    public void RpcSetPlayer2(NetworkConnection conn)
-    {
-        player2Connection = conn;
-        Debug.Log("p1 = " + player2Connection.ToString());
-
-        RpcWasReceived();
-    }
-
     [TargetRpc]
     public void RpcStartGame(NetworkConnection conn)
     {
-        //Show enemy player
-        remotePlayer.InitBuildings();
 
         //Assemble Deck
         for (int i = 0; i < deckCards.Count; i++)
@@ -181,7 +306,6 @@ public class GameManager : NetworkBehaviour
 
         //Make it Player 1's turn.
         isLocalPlayerTurn = conn == player1Connection ? true : false;
-        RpcWasReceived();
     }
 
     [Client]

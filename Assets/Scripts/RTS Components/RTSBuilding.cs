@@ -13,10 +13,15 @@ public class RTSBuilding : MonoBehaviour
         thisBuilding = building;
     }
 
+    public void SetThisTeamColor(TeamColor color)
+    {
+        thisTeam = color;
+    }
+
     void OnEnable()
     {
         //set material from Scriptable Object
-        GetComponent<MeshRenderer>().material = thisTeam.teamColor;
+        GetComponent<MeshRenderer>().material = thisTeam.buildingColor;
 
         GetComponent<MeshFilter>().mesh = thisBuilding.buildingPrefab.GetComponent<MeshFilter>().sharedMesh;
         GetComponent<BoxCollider>().center = thisBuilding.buildingPrefab.GetComponent<BoxCollider>().center;

@@ -25,7 +25,16 @@ public class PlayerHand : NetworkBehaviour,
         GameObject cardObject = Instantiate(cardPrefab.gameObject);
         cardObject.transform.SetParent(handLayout, false);
 
-        cardObject.GetComponent<CardDisplay>().SetThisCard(card);
+        var cardDisplay = cardObject.GetComponent<BuildingCardDisplay>();
+        if (cardDisplay)
+        {
+            cardDisplay.SetThisCard(card);
+        }
+        else
+        {
+            cardObject.GetComponent<CardDisplay>()?.SetThisCard(card);
+        }
+            
         size++;
     }
 

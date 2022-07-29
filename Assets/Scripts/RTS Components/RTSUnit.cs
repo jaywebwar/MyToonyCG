@@ -1,9 +1,10 @@
+using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RTSUnit : MonoBehaviour
+public class RTSUnit : NetworkBehaviour
 {
     [SerializeField] Unit thisUnit;
     [SerializeField] TeamColor teamColor;
@@ -65,13 +66,16 @@ public class RTSUnit : MonoBehaviour
                 }
                 else
                 {
-                    childrenToSkin.Add(transform.GetChild(i).gameObject);
+                    if(transform.GetChild(i).gameObject.activeSelf)
+                    {
+                        transform.GetChild(i).gameObject.GetComponent<SkinnedMeshRenderer>().material = teamColor.unitColor;
+                    }
                 }
             }
         }
         for(int i = 0; i < childrenToSkin.Count; i++)
         {
-            childrenToSkin[i].GetComponent<MeshRenderer>().material = teamColor.teamColor;
+            childrenToSkin[i].GetComponent<MeshRenderer>().material = teamColor.unitColor;
         }
     }
 
@@ -79,7 +83,10 @@ public class RTSUnit : MonoBehaviour
     {
         for (int j = 0; j < parent.childCount; j++)
         {
-            List.Add(parent.GetChild(j).gameObject);
+            if(parent.GetChild(j).gameObject.activeSelf)
+            {
+                List.Add(parent.GetChild(j).gameObject);
+            }
         }
     }
 

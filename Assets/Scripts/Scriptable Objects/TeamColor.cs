@@ -5,5 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="New Color", menuName ="Team Color")]
 public class TeamColor : ScriptableObject
 {
-    public Material teamColor;
+    public Material buildingColor;
+    public Material unitColor;
 }
