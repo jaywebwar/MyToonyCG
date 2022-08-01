@@ -7,4 +7,5 @@ public class Building : ScriptableObject
 {
     public GameObject buildingPrefab;
     public List<Unit> spawnableUnits;
+    public string buildingName;
 }

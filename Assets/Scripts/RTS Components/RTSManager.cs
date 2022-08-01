@@ -11,29 +11,23 @@ public class RTSManager : NetworkBehaviour
     [SerializeField] GameObject keep;
     [SerializeField] List<GameObject> playerMatArray;
 
+    [SerializeField] List<Building> possibleBuildings;
+
     [SerializeField] TeamColor selfColor;
     [SerializeField] TeamColor enemyColor;
 
-    string leaderName;
+    [SyncVar] public string leaderName;
 
     [Command(requiresAuthority = false)]
     public void CmdInitBuildings()
     {
         Debug.Log("Server Init Buildings.");
         InitBuildings();
-        //RpcInitBuildings();
-    }
-
-    [ClientRpc]
-    public void RpcInitBuildings()
-    {
-        Debug.Log("ClientRpc for init buildings.");
-        InitBuildings();
     }
 
     public void InitBuildings()
     {
-        //Hides all buildings and building mat
+        //Hides all buildings
         for (int i = 0; i < primaryBuildings.Count; i++)
         {
             primaryBuildings[i].SetActive(false);
@@ -50,6 +44,7 @@ public class RTSManager : NetworkBehaviour
                 secondaryBuildings[i].GetComponent<RTSBuilding>().SetThisTeamColor(enemyColor);
             }
         }
+        //Hide player mat
         foreach (var item in playerMatArray)
         {
             item.SetActive(false);
@@ -57,7 +52,7 @@ public class RTSManager : NetworkBehaviour
 
         //ensures keep and towers are active and sets color
         if (isServer) { }
-        else if(isLocalPlayer)
+        else if (isLocalPlayer)
         {
             keepTowers[0].GetComponent<RTSBuilding>().SetThisTeamColor(selfColor);
             keepTowers[1].GetComponent<RTSBuilding>().SetThisTeamColor(selfColor);
@@ -69,27 +64,79 @@ public class RTSManager : NetworkBehaviour
             keepTowers[1].GetComponent<RTSBuilding>().SetThisTeamColor(enemyColor);
             keep.GetComponent<RTSBuilding>().SetThisTeamColor(enemyColor);
         }
+        //Disable keep and towers
         keepTowers[0].SetActive(false);
         keepTowers[1].SetActive(false);
         keep.SetActive(false);
+        //Ensure they are set properly
+        keepTowers[0].GetComponent<RTSBuilding>().SetThisBuilding(possibleBuildings[GetBuildingIndexFromPossibleList("Keep Tower 1")]);
+        keepTowers[1].GetComponent<RTSBuilding>().SetThisBuilding(possibleBuildings[GetBuildingIndexFromPossibleList("Keep Tower 1")]);
+        keep.GetComponent<RTSBuilding>().SetThisBuilding(possibleBuildings[GetBuildingIndexFromPossibleList("Keep 1")]);
+        //Enable Initialized buildings
         keepTowers[0].SetActive(true);
         keepTowers[1].SetActive(true);
         keep.SetActive(true);
     }
 
+    private int GetBuildingIndexFromPossibleList(string buildingName)
+    {
+        for (int i = 0; i < possibleBuildings.Count; i++)
+        {
+            if (possibleBuildings[i].buildingName == buildingName)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public GameObject GetKeep()
+    {
+        return keep;
+    }
+
+    [Server]
     public void AssignLeader(string name)
     {
         leaderName = name;
+        Debug.Log("Leader name set to " + name);
     }
 
-    public void SpawnLeader()
+    [Server]
+    public void SpawnLeader(int playerNumber)
     {
+        Debug.Log("Running SpawnLeader() in RTSM");
         foreach (var unit in keep.GetComponent<RTSBuilding>().thisBuilding.spawnableUnits)
         {
+
             if (unit.unitName == leaderName)
             {
-                Instantiate(unit.unitPrefab, keep.transform.GetChild(0));
+                Debug.Log("Instantiate gets called on leader unit");
+                Transform spawnPoint = keep.transform.GetChild(0);  //Important to have SpawnPoint as first child of buildings
+                GameObject leaderGO = Instantiate(unit.unitPrefab, spawnPoint.position, spawnPoint.rotation);
+
+                RTSUnit _rtsUnit = leaderGO.GetComponent<RTSUnit>();
+                _rtsUnit.SetOwningPlayerNumber(playerNumber);
+                _rtsUnit.SetOwningBuildingIndex(-1);
+
+                NetworkServer.Spawn(leaderGO, GetComponent<Player>().gameObject);
             }
         }
+    }
+
+    public TeamColor GetSelfColor()
+    {
+        return selfColor;
+    }
+
+    public TeamColor GetEnemyColor()
+    {
+        return enemyColor;
+    }
+
+    public GameObject GetPrimaryBuilding(int owningBuildingIndex)
+    {
+        return primaryBuildings[owningBuildingIndex];
     }
 }

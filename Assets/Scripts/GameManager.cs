@@ -56,37 +56,52 @@ public class GameManager : NetworkBehaviour
         //Set connections
         NetworkIdentity _ni = GetComponent<NetworkIdentity>();
 
+        //Doesn't find both players right away. Add a little delay so that players are properly loaded on server.
+        yield return new WaitForSeconds(0.1f);
+
+        Player[] players = FindObjectsOfType<Player>();
+        Debug.Log("Number of players on server " + players.Length);
+
+        //Sets the Players on the server
+        foreach (var player in players)
+        {
+            if(player.connectionToClient == conn1)
+            {
+                Debug.Log("Player 1 connection found.");
+                player1 = player;
+                player1.SetPlayerNumber(1);
+            }
+            else
+            {
+                Debug.Log("Player 2 connection found.");
+                player2 = player;
+                player2.SetPlayerNumber(2);
+            }
+        }
+
+        //Assigns player connections on server and sets the player numbers on the client
         Debug.Log("Set Player1");
         _ni.AssignClientAuthority(conn1);
         player1Connection = _ni.connectionToClient;
         rpcReceived = false;
         RpcSetPlayerNumber(player1Connection, 1);
-        while(!rpcReceived)
-        {
-            yield return null;
-        }
+        while (!rpcReceived){ yield return null; }
         _ni.RemoveClientAuthority();
-    
 
         Debug.Log("Set player2Connection");
         _ni.AssignClientAuthority(conn2);
         player2Connection = _ni.connectionToClient;
         rpcReceived = false;
         RpcSetPlayerNumber(player2Connection, 2);
-        while(!rpcReceived)
-        {
-            yield return null;
-        }
+        while (!rpcReceived){ yield return null; }
         _ni.RemoveClientAuthority();
 
-        AssignPlayersOnServer();
         Debug.Log("Players assigned.");
 
-        //Alert all players that all players have connected.
+        //Initializes the call to RTSManager.CmdInitBuildings() to set up the opponent's buildings on each client
         AlertPlayersOfConnection();
 
         StartCoroutine(HandlePlayerPreGameChoices());
-        
     }
 
     [ClientRpc]
@@ -123,6 +138,21 @@ public class GameManager : NetworkBehaviour
                     player2 = player;
                 }
             }
+            else
+            {
+                if (playerNumber == 1)
+                {
+                    Debug.Log("Sets P2 to enemy.");
+                    player2 = player;
+                    player2.SetPlayerNumber(2);
+                }
+                else
+                {
+                    Debug.Log("Sets P1 to enemy.");
+                    player1 = player;
+                    player1.SetPlayerNumber(1);
+                }
+            }
         }
         CmdRpcReceived();
     }
@@ -134,23 +164,6 @@ public class GameManager : NetworkBehaviour
     }
 
     [Server]
-    void AssignPlayersOnServer()
-    {
-        Player[] players = FindObjectsOfType<Player>();
-        for (int i = 0; i < players.Length; i++)
-        {
-            if (players[i].GetPlayerNumber() == 1)
-            {
-                player1 = players[i];
-            }
-            else if (players[i].GetPlayerNumber() == 2)
-            {
-                player2 = players[i];
-            }
-        }
-    }
-
-    [Server]
     private IEnumerator HandlePlayerPreGameChoices()
     {
         //TODO: Let player choose their color and their enemy's color
@@ -159,20 +172,15 @@ public class GameManager : NetworkBehaviour
         //Assign Leaders
         Debug.Log("Showing Leader options to P2.");
         RpcShowLeaderOptions(player2Connection, leaderIndexToIgnore);
-        while(!p2PickedLeader)
-        {
-            yield return null;
-        }
+        while(!p2PickedLeader){ yield return null; }
 
         Debug.Log("Showing Leader options to P1.");
         RpcShowLeaderOptions(player1Connection, leaderIndexToIgnore);
-        while(!p1PickedLeader)
-        {
-            yield return null;
-        }
+        while(!p1PickedLeader){ yield return null; }
 
         Debug.Log("Server says to spawn leaders.");
         SpawnLeaders();
+
         //Start Game loop
         //Debug.Log("Start p1 game");
         //RpcReceived = false;
@@ -213,9 +221,9 @@ public class GameManager : NetworkBehaviour
         if (leaderIndexToIgnore < 0)
         {
             Debug.Log("P2 picked " + leaderCards[index].cardName);
-            p2PickedLeader = true;
-            p2Leader = leaderCards[index];
+            player2.AssignLeader(leaderCards[index].cardName);
             leaderIndexToIgnore = index;
+            p2PickedLeader = true;
         }
         else
         {
@@ -229,6 +237,8 @@ public class GameManager : NetworkBehaviour
                 Debug.Log("P1 picked " + leaderCards[index+1]);
                 p1Leader = leaderCards[index + 1];
             }
+            
+            player1.AssignLeader(p1Leader.cardName);
             p1PickedLeader = true;
         }
     }
@@ -236,8 +246,8 @@ public class GameManager : NetworkBehaviour
     [Server]
     void SpawnLeaders()
     {
-        RpcSpawnLeader(player1Connection, 1);
-        RpcSpawnLeader(player2Connection, 2);
+        player1.SpawnLeader();
+        //player2.SpawnLeader();
     }
 
     [TargetRpc]

@@ -43,7 +43,6 @@ public class LeaderCardDisplay : CardDisplay, IPointerClickHandler
     {
         Debug.Log(eventData.pointerClick.transform.GetSiblingIndex().ToString() + " is the index of the leader chosen.");
         _gm.CmdMakeLeaderChoice(eventData.pointerClick.transform.GetSiblingIndex());
-        _localPlayer.AssignLeader(eventData.pointerClick.GetComponent<LeaderCardDisplay>().cardName.text);
 
         //remove cards from screen
         transform.parent.gameObject.SetActive(false);

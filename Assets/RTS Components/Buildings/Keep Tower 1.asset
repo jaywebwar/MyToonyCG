@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Keep Tower 1
   m_EditorClassIdentifier: 
   buildingPrefab: {fileID: 5801495248759263103, guid: cd8cebeeb5c6758498ab556cae8676dd, type: 3}
+  spawnableUnits: []
+  buildingName: Keep Tower 1

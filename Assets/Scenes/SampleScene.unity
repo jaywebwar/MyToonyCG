@@ -107,8 +107,8 @@ NavMeshSettings:
     serializedVersion: 2
     agentTypeID: 0
     agentRadius: 0.5
-    agentHeight: 2
-    agentSlope: 45
+    agentHeight: 5
+    agentSlope: 50
     agentClimb: 0.4
     ledgeDropHeight: 0
     maxJumpAcrossDistance: 0
@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: b6ebc3040f8864c4badaf804d7bbbeda, type: 2}
 --- !u!1001 &3361694
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1609,7 +1609,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 118937614}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 175, z: 0}
+  m_LocalPosition: {x: 0, y: 174.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16240,7 +16240,20 @@ MonoBehaviour:
   playerPrefab: {fileID: 4536188830618706567, guid: 8e51e4386cd840b4682cb544c56e27da, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6567959352746015881, guid: 37f4933c9a420cd45916e8ba6ac26c89, type: 3}
+  - {fileID: 8169225548165927620, guid: 1eb9a63779fa5a04ab2cbbe36301e365, type: 3}
+  - {fileID: 1786659440724423379, guid: 1fa5304e44bee924b903d95aa14fbbc1, type: 3}
+  - {fileID: 2839673629000216153, guid: c703979e5e8eeff4586c09375640ad91, type: 3}
+  - {fileID: 95145658340822512, guid: 9efc3f32ecc1d9244885b6d29bb6f2f8, type: 3}
+  - {fileID: 665440201996530705, guid: 9a55f9a22ef7f264d9aed495fcba6f3d, type: 3}
+  - {fileID: 6127388856473726877, guid: f37b5350d7db0604ba6e49332b5a8091, type: 3}
+  - {fileID: 2162231990534855588, guid: e9761f5d3643a7f45b15ba1aff94ff99, type: 3}
+  - {fileID: 2911663459495860393, guid: 4a65a596f27a9a54ab91d55d3927f98d, type: 3}
+  - {fileID: 4732460937378224521, guid: 62610b2cc7a71df4fa5424a7724a5ddf, type: 3}
+  - {fileID: 8995797062266076028, guid: d7ceb48b3b2142248b24205eabe9dfbd, type: 3}
+  - {fileID: 8559636778431051099, guid: af86590c70489fa44b03a8ee18af3d87, type: 3}
+  - {fileID: 7951843539380955521, guid: 20dbb5515f3c5e145964e0cee5fc85aa, type: 3}
   gameManager: {fileID: 1171883623}
 --- !u!1001 &1268518880
 PrefabInstance:

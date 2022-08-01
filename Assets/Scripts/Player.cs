@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
 
     GameManager _gm;
     RTSManager _rtsm;
+
     [SerializeField] int playerNumber = 0;
 
     bool allPlayersAreConnected = false;
@@ -33,6 +34,15 @@ public class Player : NetworkBehaviour
         _rtsm.InitBuildings();//Set locally while waiting.
     }
 
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+
+        //Get references for later
+        _gm = FindObjectOfType<GameManager>();
+        _rtsm = gameObject.GetComponent<RTSManager>();
+    }
+
     IEnumerator WaitForPlayersToConnect()
     {
         while(!allPlayersAreConnected)
@@ -48,15 +58,17 @@ public class Player : NetworkBehaviour
         allPlayersAreConnected = b;
     }
 
+    [Server]
     public void AssignLeader(string name)
     {
         _rtsm.AssignLeader(name);
     }
 
+    [Server]
     public void SpawnLeader()
     {
         Debug.Log("Spawning Leader");
-        _rtsm.SpawnLeader();
+        _rtsm.SpawnLeader(playerNumber);
     }
 
     public void SetPlayerNumber(int number)

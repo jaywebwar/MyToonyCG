@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: Archery Range
   m_EditorClassIdentifier: 
   buildingPrefab: {fileID: 8305870879514270442, guid: 1ab1b88d892374549b1162de30514196, type: 3}
+  spawnableUnits: []
+  buildingName: 
